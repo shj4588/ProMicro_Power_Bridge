@@ -1,0 +1,25 @@
+name: Build UF2 firmware
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Zephyr west
+        uses: zephyrproject-rtos/action-west@v0.14
+        with:
+          zephyr-version: main
+
+      - name: Build firmware
+        run: |
+          west build --build-dir build_nano_xds . --pristine --board promicro_nrf52840/nrf52840/uf2
+
+      - name: Upload UF2 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-uf2
+          path: build_nano_xds/zephyr/zephyr.uf2
