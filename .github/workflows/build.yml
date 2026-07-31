@@ -5,21 +5,34 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu‑latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-      - name: Setup Zephyr west
-        uses: zephyrproject-rtos/action-west@v0.14
-        with:
-          zephyr-version: main
+      - name: Install dependencies
+        run: |
+          sudo apt‑get update
+          sudo apt‑get install ‑y git python3 python3‑pip cmake ninja‑build dtc wget unzip
+
+      - name: Setup west & zephyr workspace
+        run: |
+          python3 -m pip install west
+          west init‑local .
+          west update
+
+      - name: Install Zephyr‑SDK
+        run: |
+          wget https://github.com/zephyrproject‑rtos/sdk‑ng/releases/download/v0.17.0/zephyr‑sdk‑0.17.0_linux‑x86_64.tar.xz
+          tar xf zephyr‑sdk‑0.17.0_linux‑x86_64.tar.xz
+          echo "ZEPHYR_SDK_INSTALL_DIR=${{ github.workspace }}/zephyr‑sdk‑0.17.0" >> $GITHUB_ENV
 
       - name: Build firmware
         run: |
           west build --build-dir build_nano_xds . --pristine --board promicro_nrf52840/nrf52840/uf2
 
       - name: Upload UF2 artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload‑artifact@v4
         with:
-          name: firmware-uf2
+          name: firmware‑uf2
           path: build_nano_xds/zephyr/zephyr.uf2
