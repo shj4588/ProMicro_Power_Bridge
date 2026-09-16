@@ -1,0 +1,17 @@
+# Application-level west manifest.
+# Import the full nRF Connect SDK v3.2.4 tree (zephyr, nrf, hal_nordic, ...).
+# The ANT stack (sdk-ant) is NOT part of the public NCS manifest group and lives
+# in the private repo ant-nrfconnect/sdk-ant; it is fetched separately by CI or
+# unpacked manually to <ncs_root>/ant (see CMakeLists.txt).
+manifest:
+  remotes:
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+  projects:
+    - name: nrf
+      repo-path: sdk-nrf
+      remote: ncs
+      revision: v3.2.4
+      import: true
+  self:
+    path: app
